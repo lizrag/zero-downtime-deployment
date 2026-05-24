@@ -1,0 +1,36 @@
+groups:
+  - name: auth-service-slos
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{job="auth-service", status=~"5.."}[2m]))
+          /
+          sum(rate(http_requests_total{job="auth-service"}[2m])) > 0.005
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Success rate dropped below 99.5%"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 2 minutes. SLO breach: success rate must be >= 99.5%"
+
+      - alert: HighLatencyP99
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(http_request_duration_seconds_bucket{job="auth-service"}[2m])) by (le)
+          ) > 2.0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P99 latency above 2 seconds"
+          description: "P99 latency is {{ $value }}s over the last 2 minutes"
+
+      - alert: LowThroughput
+        expr: |
+          sum(rate(http_requests_total{job="auth-service"}[2m])) < 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Throughput too low"
+          description: "Less than 1 request/sec over the last 2 minutes — service may be down"
