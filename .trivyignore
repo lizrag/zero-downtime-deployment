@@ -1,0 +1,4 @@
+# CVE-2025-69720: ncurses buffer overflow in debian 13.5
+# No fix available upstream — Fixed Version field is empty in Trivy report
+# Not exploitable in this context: ncurses is not used by the application
+CVE-2025-69720

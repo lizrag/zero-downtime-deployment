@@ -64,6 +64,8 @@ Fargate makes sense for stable predictable workloads, small teams that don't wan
 - **Terraform Structure**
 Infrastructure as code using Terraform modules — reproducible and auditable across environments:cluster, node groups, VPC, IAM roles. Reproducible across environments (staging, production) and auditable for compliance. 
 
+```
+.
 terraform/
 ├── modules/
 │   ├── eks/        # Cluster, node groups, Cluster Autoscaler
@@ -80,7 +82,7 @@ terraform/
     └── production/
         ├── main.tf
         └── backend.tf    # S3: terraform-state-prod
-
+```
 
 - **Multi-region** eu-west-1 (Ireland) + af-south-1 (Cape Town) for East Africa latency reduction
 - **Route 53** latency-based routing + health check failover between regions
