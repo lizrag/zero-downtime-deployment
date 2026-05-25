@@ -27,6 +27,10 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: python
+          config: |
+            disable-default-queries: false
+            paths-ignore:
+              - '**/*.md'
 
       - name: Build Docker image
         run: docker build -t auth-service:${{ github.sha }} .
