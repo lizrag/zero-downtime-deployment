@@ -61,12 +61,32 @@ Fargate makes sense for stable predictable workloads, small teams that don't wan
 | Region failure | Route 53 failover to af-south-1 | Seconds |
 
 ### Full Production Stack
-- **EKS provision by Terraform** — cluster, node groups, VPC, IAM roles defined as code using terraform modules. Reproducible across environments (staging, production) and auditable for compliance. 
-- **Multi-region**: eu-west-1 (Ireland) + af-south-1 (Cape Town) for East Africa latency reduction
+- **Terraform Structure**
+Infrastructure as code using Terraform modules — reproducible and auditable across environments:cluster, node groups, VPC, IAM roles. Reproducible across environments (staging, production) and auditable for compliance. 
+
+terraform/
+├── modules/
+│   ├── eks/        # Cluster, node groups, Cluster Autoscaler
+│   ├── vpc/        # Subnets, AZs, routing, NAT
+│   ├── iam/        # Roles, policies, OIDC for GitHub Actions
+│   └── secrets/    # AWS Secrets Manager, CSI Driver config
+└── environments/
+    ├── dev/
+    │   ├── main.tf
+    │   └── backend.tf    # S3: terraform-state-dev
+    ├── staging/
+    │   ├── main.tf
+    │   └── backend.tf    # S3: terraform-state-staging
+    └── production/
+        ├── main.tf
+        └── backend.tf    # S3: terraform-state-prod
+
+
+- **Multi-region** eu-west-1 (Ireland) + af-south-1 (Cape Town) for East Africa latency reduction
 - **Route 53** latency-based routing + health check failover between regions
 - **ALB (Application Load Balancer)** distributes traffic across pods and AZs
 - **RDS Multi-AZ** with read replicas — automatic failover if primary goes down
-- **CloudWatch Container Insights** for metrics and alerting in EKS — integrates natively with AWS infrastructure and supports CloudWatch Alarms for SLO-based alerting
+- **CloudWatch Container Insights** for metrics and alerting in EKS — integrates natively with AWS infrastructure and supports CloudWatch Alarms
 - **AWS Secrets Manager + Secrets Store CSI Driver** for secret rotation without redeployment
 ---
 

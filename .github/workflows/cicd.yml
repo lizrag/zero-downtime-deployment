@@ -9,6 +9,10 @@ on:
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
 
     steps:
       - name: Checkout code
@@ -29,8 +33,6 @@ jobs:
 
       - name: Scan code (CodeQL)
         uses: github/codeql-action/analyze@v3
-        with:
-          languages: python
 
       - name: Scan for vulnerabilities (Trivy)
         uses: aquasecurity/trivy-action@master
