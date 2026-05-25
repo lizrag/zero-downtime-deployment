@@ -55,11 +55,3 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl set image deployment/auth-service \
-            auth-service=auth-service:${{ github.sha }}
-          kubectl rollout status deployment/auth-service
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
